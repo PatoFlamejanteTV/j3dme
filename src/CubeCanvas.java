@@ -102,10 +102,13 @@ public class CubeCanvas extends Canvas implements Runnable {
     }
 
     private float[] matmul(float[][] matrix, float[] vector) {
+        if (matrix[0].length != vector.length) {
+            throw new IllegalArgumentException("Matrix and vector dimensions are not compatible for multiplication.");
+        }
         float[] result = new float[matrix.length];
         for (int i = 0; i < matrix.length; i++) {
             float sum = 0;
-            for (int j = 0; j < vector.length; j++) {
+            for (int j = 0; j < matrix[0].length; j++) {
                 sum += matrix[i][j] * vector[j];
             }
             result[i] = sum;
