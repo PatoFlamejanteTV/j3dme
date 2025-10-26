@@ -1,0 +1,76 @@
+<project name="J2MECube" default="build">
+    <!-- Properties -->
+    <property name="wtk.home" value="C:/WTK2.5.2" />
+    <property name="midp.api" value="${wtk.home}/lib/midpapi20.jar" />
+    <property name="cldc.api" value="${wtk.home}/lib/cldcapi11.jar" />
+    <property name="wtk.preverify.jar" value="${wtk.home}/bin/preverify.jar" />
+    <property name="app.name" value="J2MECube" />
+    <property name="app.version" value="1.0.0" />
+    <property name="app.vendor" value="Awesome Inc" />
+    <property name="app.midlet" value="MainMIDlet" />
+
+    <!-- Directories -->
+    <property name="src.dir" value="src" />
+    <property name="build.dir" value="build" />
+    <property name="dist.dir" value="dist" />
+    <property name="classes.dir" value="${build.dir}/classes" />
+    <property name="preverified.dir" value="${build.dir}/preverified" />
+
+    <!-- Targets -->
+    <target name="init">
+        <mkdir dir="${classes.dir}" />
+        <mkdir dir="${preverified.dir}" />
+        <mkdir dir="${dist.dir}" />
+    </target>
+
+    <target name="compile" depends="init">
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" bootclasspath="${cldc.api}:${midp.api}" source="1.3" target="1.3" encoding="UTF-8" />
+    </target>
+
+    <target name="preverify" depends="compile">
+        <java classname="com.sun.kvem.preverify.Preverify" fork="true">
+            <arg value="-classpath" />
+            <arg value="${cldc.api}:${midp.api}" />
+            <arg value="-d" />
+            <arg value="${preverified.dir}" />
+            <arg value="${classes.dir}" />
+            <classpath>
+                <pathelement location="${wtk.preverify.jar}" />
+            </classpath>
+        </java>
+    </target>
+
+    <target name="jar" depends="preverify">
+        <jar destfile="${dist.dir}/${app.name}.jar" basedir="${preverified.dir}">
+            <manifest>
+                <attribute name="MIDlet-1" value="${app.name},,${app.midlet}" />
+                <attribute name="MIDlet-Name" value="${app.name}" />
+                <attribute name="MIDlet-Version" value="${app.version}" />
+                <attribute name="MIDlet-Vendor" value="${app.vendor}" />
+                <attribute name="MicroEdition-Profile" value="MIDP-2.0" />
+                <attribute name="MicroEdition-Configuration" value="CLDC-1.1" />
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="jad" depends="jar">
+        <property name="jar.size" value="" />
+        <length file="${dist.dir}/${app.name}.jar" property="jar.size" />
+        <echo file="${dist.dir}/${app.name}.jad" append="false">MIDlet-1: ${app.name},,${app.midlet}
+MIDlet-Name: ${app.name}
+MIDlet-Version: ${app.version}
+MIDlet-Vendor: ${app.vendor}
+MIDlet-Jar-URL: ${app.name}.jar
+MIDlet-Jar-Size: ${jar.size}
+MicroEdition-Profile: MIDP-2.0
+MicroEdition-Configuration: CLDC-1.1
+</echo>
+    </target>
+
+    <target name="build" depends="jad" />
+
+    <target name="clean">
+        <delete dir="${build.dir}" />
+        <delete dir="${dist.dir}" />
+    </target>
+</project>
