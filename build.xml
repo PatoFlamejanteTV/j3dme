@@ -1,6 +1,7 @@
 <project name="J2MECube" default="build">
     <!-- Properties -->
-    <property name="wtk.home" value="C:/WTK2.5.2" />
+    <property environment="env"/>
+    <property name="wtk.home" value="${env.WTK_HOME}" />
     <property name="midp.api" value="${wtk.home}/lib/midpapi20.jar" />
     <property name="cldc.api" value="${wtk.home}/lib/cldcapi11.jar" />
     <property name="wtk.preverify.jar" value="${wtk.home}/bin/preverify.jar" />
