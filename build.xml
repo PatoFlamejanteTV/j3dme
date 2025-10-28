@@ -25,7 +25,7 @@
     </target>
 
     <target name="compile" depends="init, compile-dummy">
-        <javac srcdir="${src.dir}" destdir="${classes.dir}" source="8" target="8" encoding="UTF-8">
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" bootclasspath="${cldc.api}:${midp.api}" source="1.3" target="1.3" encoding="UTF-8">
             <classpath>
                 <pathelement location="${dummy.build.dir}" />
             </classpath>
